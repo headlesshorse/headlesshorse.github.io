@@ -190,8 +190,7 @@
         position: fixed;
         bottom: 1.7em;
         left: 2em;
-        z-index: 2;
-        cursor: pointer
+        z-index: 2
       }
 
       #filter {
@@ -217,8 +216,6 @@
       }
 
       #filter summary {
-        display: grid;
-        grid-template-columns: 1em 1fr;
         align-self: flex-end;
         order: 3;
         width: 100%;
@@ -230,24 +227,14 @@
         display: none
       }
 
-      #filter summary::before,
       #filter li::before {
         text-align: left;
         white-space: nowrap
       }
 
-      #filter summary::before {
-        content: "+";
-        padding-left: .5em
-      }
-
       #filter[open] summary {
         margin-top: 2em;
         cursor: s-resize
-      }
-
-      #filter[open] summary::before {
-        content: "-"
       }
 
       #filter summary:hover .filter-label,
@@ -680,9 +667,7 @@
 
         const x = Math.round((this.viewport.clientWidth / 2 - this.tx) / this.scale);
         const y = Math.round((this.viewport.clientHeight / 2 - this.ty) / this.scale);
-        const sound = this.sonicsEnabled ? '⏵⏸' : '⏵';
-
-        this.coords.textContent = `X${String(x / 10 | 0).padStart(3, '0')} · Y${String(y / 10 | 0).padStart(3, '0')} · ${this.scale * 100 | 0}% · ${sound}`;
+        this.coords.textContent = `X${String(x / 10 | 0).padStart(3, '0')} · Y${String(y / 10 | 0).padStart(3, '0')} · ${this.scale * 100 | 0}%`;
       }
 
       zoomTo(target, onDone) {
@@ -1098,7 +1083,7 @@
       }
 
       function setupSonics(board){
-        let s=new Sonics(),coords=document.getElementById('coords'),last;
+        let s=new Sonics(),last;
 
         board.sonicsEnabled=1;
 
@@ -1106,9 +1091,11 @@
         addEventListener('pointerdown',arm,{once:1});
         addEventListener('keydown',arm,{once:1});
 
-        coords.onclick=()=>{
-          board.sonicsEnabled=s.toggle();
-        };
+        addEventListener('keydown',e=>{
+          if((e.key==='m'||e.key==='M')&&!e.metaKey&&!e.ctrlKey&&!e.altKey){
+            board.sonicsEnabled=s.toggle();
+          }
+        });
 
         board.stage.onpointerover=e=>{
           let f=e.target.closest('figure[data-color]');
