@@ -33,11 +33,6 @@
         color: inherit
       }
 
-      ::-moz-selection {
-        background: transparent;
-        color: inherit
-      }
-
       body {
         background: #000
       }
@@ -51,13 +46,19 @@
         counter-increment: section
       }
 
-      a:hover {
-        cursor: pointer;
+      a[target=_blank] {
+        cursor: ne-resize
+      }
+
+      a:hover,
+      nav button:hover,
+      #filter summary:hover .filter-label,
+      #filter li:hover .filter-label {
         animation: flicker 2s
       }
 
-      a[target=_blank] {
-        cursor: ne-resize
+      #logo:hover {
+        animation: none
       }
 
       a[data-more]:hover::after {
@@ -80,10 +81,6 @@
         padding: 1em 2em
       }
 
-      #logo:hover {
-        animation: none
-      }
-
       nav {
         display: flex;
         gap: 2em
@@ -94,10 +91,6 @@
         background: none;
         text-transform: uppercase;
         cursor: pointer
-      }
-
-      nav button:hover {
-        animation: flicker 2s
       }
 
       #viewport {
@@ -113,26 +106,35 @@
         right: 0;
         z-index: 1;
         height: 140px;
+        background: linear-gradient(var(--to), rgb(0 0 0 / .8), transparent);
         pointer-events: none
       }
 
       #viewport::before {
-        top: 0;
-        background: linear-gradient(to bottom, rgb(0, 0, 0, .8) 0%, transparent 100%)
+        --to: to bottom;
+        top: 0
       }
 
       #viewport::after {
-        bottom: 0;
-        background: linear-gradient(to top, rgb(0, 0, 0, .8) 0%, transparent 100%)
+        --to: to top;
+        bottom: 0
+      }
+
+      #stage {
+        transform-origin: 0 0
+      }
+
+      figure,
+      #info {
+        padding: 2em;
+        background: var(--corner);
+        background-size: calc(4px / var(--scale, 1)) calc(4px / var(--scale, 1));
+        background-repeat: no-repeat
       }
 
       figure {
         position: absolute;
-        padding: 2em;
-        background: var(--corner);
-        background-size: calc(4px / var(--scale, 1)) calc(4px / var(--scale, 1));
-        background-repeat: no-repeat;
-        transition: all .7s ease
+        transition: .7s
       }
 
       figure:hover {
@@ -140,45 +142,48 @@
         background-size: calc(10px / var(--scale, 1)) calc(10px / var(--scale, 1))
       }
 
+      figure.leaving {
+        opacity: 0;
+        scale: .96;
+        pointer-events: none;
+        transition: opacity .2s var(--out, 0s), scale .2s var(--out, 0s)
+      }
+
       figure img {
         display: block;
         width: 100%;
-        height: auto;
         filter: grayscale(50%) contrast(.8) brightness(.9);
-        animation: fade 1s 7s both
+        animation: fade 1s both
       }
 
-      figure figcaption {
+      figcaption {
         position: absolute;
-        left: 2em;
-        right: 2em;
-        bottom: .1em;
+        inset: auto 2em .1em;
         text-align: center;
         text-overflow: ellipsis;
         white-space: nowrap;
         opacity: 0;
-        transition: opacity .3s ease
+        transition: opacity .3s
       }
 
       figure:hover figcaption {
         opacity: 1
       }
 
-      figure figcaption a {
-        font-size: calc(11px / var(--scale, 1));
+      figcaption a {
+        font-size: calc(11px / var(--scale, 1))
       }
 
-      figure a {
-        cursor: ne-resize;
-        pointer-events: auto
-      }
-
-      #status {
+      #status,
+      #info {
         position: fixed;
         top: 50%;
         left: 50%;
+        transform: translate(-50%, -50%)
+      }
+
+      #status {
         z-index: 999;
-        transform: translate(-50%, -50%);
         text-transform: uppercase
       }
 
@@ -186,37 +191,26 @@
         display: none
       }
 
-      #coords {
+      #coords,
+      #filter {
         position: fixed;
         bottom: 1.7em;
-        left: 2em;
         z-index: 2
       }
 
+      #coords {
+        left: 2em
+      }
+
       #filter {
-        position: fixed;
         right: 2em;
-        bottom: 1.7em;
-        z-index: 2;
         display: flex;
         flex-direction: column;
-        justify-content: flex-end;
         width: 12em;
-        text-align: left;
         text-transform: uppercase
       }
 
-      #filter.hidden {
-        opacity: 0;
-        pointer-events: none
-      }
-
-      #filter[open] {
-        justify-content: flex-start
-      }
-
       #filter summary {
-        align-self: flex-end;
         order: 3;
         width: 100%;
         text-align: right;
@@ -227,19 +221,9 @@
         display: none
       }
 
-      #filter li::before {
-        text-align: left;
-        white-space: nowrap
-      }
-
       #filter[open] summary {
         margin-top: 2em;
         cursor: s-resize
-      }
-
-      #filter summary:hover .filter-label,
-      #filter li:hover .filter-label {
-        animation: flicker 2s
       }
 
       #filter li {
@@ -247,49 +231,32 @@
         grid-template-columns: 1em 1fr;
         padding: .2em 0;
         text-align: right;
-        opacity: 0;
-        transform: translateY(10px);
         cursor: pointer
       }
 
+      #filter[open] li {
+        animation: filter .3s calc(var(--i) * .04s) both
+      }
+
       #filter li::before {
-        content: "[ ]"
+        content: "[ ]";
+        text-align: left;
+        white-space: nowrap
       }
 
-      #filter li.active::before {
-        content: "[▪]"
-      }
-
+      #filter li.active::before,
       #filter li:hover::before {
         content: "[▪]"
       }
 
-      #filter[open] li {
-        animation: filter .3s ease forwards
-      }
-
-      #filter[open] li:nth-child(5) { animation-delay: .06s }
-      #filter[open] li:nth-child(4) { animation-delay: .12s }
-      #filter[open] li:nth-child(3) { animation-delay: .16s }
-      #filter[open] li:nth-child(2) { animation-delay: .20s }
-      #filter[open] li:nth-child(1) { animation-delay: .24s }
-
       #info {
-        position: fixed;
-        top: 50%;
-        left: 50%;
         z-index: 2;
         width: 240px;
         max-height: 3em;
-        padding: 2em;
-        background: var(--corner);
-        background-size: 4px 4px;
-        background-repeat: no-repeat;
         opacity: 0;
         pointer-events: none;
-        transform: translate(-50%, -50%);
         counter-reset: section;
-        transition: opacity .3s ease, width .6s ease .6s, max-height .8s ease 1.2s
+        transition: opacity .3s, width .6s .6s, max-height .8s 1.2s
       }
 
       #info[aria-hidden="false"] {
@@ -304,11 +271,7 @@
         margin: 0 auto 2em;
         opacity: 0;
         transform: translateY(5px);
-        transition: opacity .3s ease .2
-      }
-
-      #info[aria-hidden="false"] #wordmark {
-        opacity: 1
+        transition: opacity .3s .2s
       }
 
       #info section {
@@ -317,18 +280,18 @@
         grid-auto-rows: max-content;
         gap: 2em;
         opacity: 0;
-        transition: opacity .3s ease 1.2s
+        transition: opacity .3s 1.2s
       }
 
-      #info[aria-hidden="false"] section {
+      #info[aria-hidden="false"] :is(#wordmark, section) {
         opacity: 1
       }
 
       @keyframes flicker { 0%, 2%, 6%, 8%, 12%, 16%, 18%, 99% { opacity: 1 } 3%, 5%, 9%, 11%, 15%, 17%, to { opacity: 0 } }
-      @keyframes fade { from { opacity: 0; transform: scale(.9) } to { opacity: 1; transform: scale(1) } }
-      @keyframes filter { from { opacity: 0; transform: translateY(10px) } to { opacity: 1; transform: translateY(0) } }
+      @keyframes fade { from { opacity: 0; transform: scale(.9) } }
+      @keyframes filter { from { opacity: 0; transform: translateY(10px) } }
 
-    </style>
+</style>
   </head>
 
   <body>
@@ -388,6 +351,13 @@
         clamp: (v, min, max) => Math.min(max, Math.max(min, v)),
         map: (x, a, b, c, d) => c + ((d - c) * (x - a)) / (b - a) || 0,
         lerp: (a, b, t) => a + (b - a) * t,
+        shuffle: list => {
+          for (let i = list.length - 1; i > 0; i--) {
+            const j = Math.random() * (i + 1) | 0;
+            [list[i], list[j]] = [list[j], list[i]];
+          }
+          return list;
+        },
       };
 
       function type(el, text, speed = 40) {
@@ -408,25 +378,19 @@
         let frame = 0;
         clearTimeout(el._t);
         const step = () => {
-          frame++;
-          const progress = frame / frames;
-          el.textContent = text.split('').map((ch, i) => (ch === ' ' || i / text.length < progress) ? ch : glyphs[Math.floor(Math.random() * glyphs.length)]).join('');
-          if (frame >= frames) { el.textContent = text; return; }
+          const progress = ++frame / frames;
+          if (progress >= 1) return el.textContent = text;
+          el.textContent = [...text].map((ch, i) => ch === ' ' || i / text.length < progress ? ch : glyphs[Math.random() * glyphs.length | 0]).join('');
           el._t = setTimeout(step, tick);
         };
         step();
       }
 
       function staggerScramble(elements, delayStep, duration = 500, tick = 24, durationStep = 0) {
-        elements.filter(Boolean).forEach((el, i) => {
+        elements.forEach((el, i) => {
           const text = el.textContent.trim();
           if (text) setTimeout(() => scramble(el, text, duration + i * durationStep, tick), i * delayStep);
         });
-      }
-
-      function bootIntro() {
-        const targets = [...document.querySelectorAll('nav button'), document.querySelector('#filter .filter-label'), document.getElementById('coords')];
-        staggerScramble(targets, 90, 700, 28, 40);
       }
 
       /* ------------------- Pinterest ------------------- */
@@ -439,8 +403,7 @@
       async function fetchPins(endpoint) {
         const res = await fetch(`https://widgets.pinterest.com/v3/pidgets/${endpoint}?limit=100`);
         if (!res.ok) throw new Error('network error');
-        const json = await res.json();
-        const pins = json?.data?.pins;
+        const pins = (await res.json())?.data?.pins;
         if (!Array.isArray(pins)) throw new Error('unexpected response');
         return pins;
       }
@@ -448,60 +411,61 @@
       /* ------------------- Board ------------------- */
 
       class Board {
+        list = document.getElementById('filter-list');
+        filter = document.getElementById('filter');
+        stage = document.getElementById('stage');
+        viewport = document.getElementById('viewport');
+        status = document.getElementById('status');
+        coords = document.getElementById('coords');
+
+        section = 'research';
+        active = new Set(['All']);
+        cache = {};
+        entries = [];
+        width = 0;
+        height = 0;
+        scale = 1;
+        appliedScale = 1;
+        minScale = .7;
+        maxScale = 2;
+        tx = 0; ty = 0;     // current offset
+        tTx = 0; tTy = 0;   // target offset
+        vx = 0; vy = 0;     // drift while Info is open
+        xMin = 0; xMax = 0; yMin = 0; yMax = 0;
+        mode = 'follow';
+        manual = false;
+        infoOpen = false;
+        firstLoad = true;
+        focused = null;
+        wanderAt = 0;
+        run = 0;
+        viewRun = 0;
+        cleared = null;
+
         constructor() {
-          this.list = document.getElementById('filter-list');
-          this.filter = document.getElementById('filter');
-          this.stage = document.getElementById('stage');
-          this.viewport = document.getElementById('viewport');
-          this.status = document.getElementById('status');
-          this.coords = document.getElementById('coords');
-
-          this.section = 'research';
-          this.active = new Set(['All']);
-          this.cache = {};
-          this.entries = [];
-          this.scale = 1;
-          this.minScale = .7;
-          this.maxScale = 2;
-          this.tx = this.ty = this.tTx = this.tTy = this.xMin = this.yMin = this.xMax = this.yMax = 0;
-          this.vx = this.vy = 0;
-          this.mode = 'follow';
-          this.manual = false;
-          this.infoOpen = false;
-          this.firstLoad = true;
-          this.focused = null;
-          this.hoverLock = false;
-          this._viewAnimGen = 0;
-          this.sonicsEnabled = true;
-          this._idle = null;
-          this._wandering = false;
-
           this.list.addEventListener('click', e => {
             const item = e.target.closest('li');
             if (item) this.toggle(item.dataset.tag);
           });
-
-          this.filter.addEventListener('toggle', () => {
-            if (this.filter.open) this.scrambleFilter();
-          });
+          this.filter.addEventListener('toggle', () => this.filter.open && this.scrambleFilter());
 
           this.buildList();
           this.move();
           this.refresh();
         }
 
-      /* ------------------- Filter ------------------- */
+        /* ------------------- Filter ------------------- */
 
         buildList() {
-          const allTitle = `All ${this.section} filters`;
-          this.list.innerHTML = ['All', ...CONTENT[this.section]]
-            .map(tag => `<li data-tag="${tag}"${tag === 'All' ? ` title="${allTitle}"` : ''}><span class="filter-label">${tag.replace(/^work\s*/i,'').replace(/-/g,' ')}</span></li>`).join('');
+          const tags = ['All', ...CONTENT[this.section]];
+          this.list.innerHTML = tags.map((tag, i) =>
+            `<li data-tag="${tag}" style="--i:${tags.length - 1 - i}"${tag === 'All' ? ` title="All ${this.section} filters"` : ''}><span class="filter-label">${tag.replace(/^work-/, '').replace(/-/g, ' ')}</span></li>`
+          ).join('');
           this.paint();
         }
 
         scrambleFilter() {
-          const targets = [this.filter.querySelector('summary .filter-label'), ...this.list.querySelectorAll('.filter-label')];
-          staggerScramble(targets, 60, 500, 24);
+          staggerScramble([...this.filter.querySelectorAll('.filter-label')], 60, 500, 24);
         }
 
         setSection(section) {
@@ -515,357 +479,332 @@
         }
 
         toggle(tag) {
-          const allTag = 'All';
-          if (tag === allTag) this.active = new Set([tag]);
+          if (tag === 'All') this.active = new Set(['All']);
           else {
-            this.active.delete(allTag);
+            this.active.delete('All');
             this.active.has(tag) ? this.active.delete(tag) : this.active.add(tag);
-            if (!this.active.size) this.active.add(allTag);
+            if (!this.active.size) this.active.add('All');
           }
           this.paint();
           this.refresh();
         }
 
         paint() {
-          [...this.list.children].forEach(item => item.classList.toggle('active', this.active.has(item.dataset.tag)));
+          for (const item of this.list.children) item.classList.toggle('active', this.active.has(item.dataset.tag));
         }
 
-      /* ------------------- Fetching ------------------- */
+        /* ------------------- Fetching ------------------- */
 
-      async fetchTag(tag) {
-        return this.cache[tag] ??= fetchPins(`boards/headlesshorse/${tag}/pins/`);
-      }
-
-      async refresh() {
-        scramble(this.status, 'loading…', 700, 28);
-        try {
-          const tags = this.active.has('All') ? CONTENT[this.section] : [...this.active];
-          const entries = new Map;
-
-          await Promise.all(tags.map(async tag => {
-            for (const pin of await this.fetchTag(tag)) {
-              const entry = entries.get(pin.id) ?? entries.set(pin.id, { pin, tags: [] }).get(pin.id);
-              entry.tags.push(tag);
-            }
-          }));
-
-          this.entries = [...entries.values()];
-          if (!this.entries.length) throw Error('empty feed');
-
-          clearTimeout(this.status._t);
-          this.status.textContent = '';
-          this.scatter(this.entries);
-        } catch (e) {
-          type(this.status, 'Signal Lost: ' + e.message, 14);
+        fetchTag(tag) {
+          return this.cache[tag] ??= fetchPins(`boards/headlesshorse/${tag}/pins/`).catch(e => {
+            delete this.cache[tag];
+            throw e;
+          });
         }
-      }
 
-      /* ------------------- Layout ------------------- */
-      
-      resolveImage(pin) {
-        for (const size of ['564x', '474x', '237x', '236x']) {
-          const url = pin.images?.[size]?.url;
-          if (url) return url;
-        }
-        return Object.values(pin.images || {}).find(image => image?.url)?.url;
-      }
-
-      resolveSource(pin) {
-        for (const value of [pin?.link, pin?.url, pin?.pinterest_url, pin?.source?.url, pin?.source?.link].filter(Boolean)) {
+        async refresh() {
+          const run = ++this.run;
+          scramble(this.status, 'loading…', 700, 28);
           try {
-            const url = new URL(value.startsWith('http') ? value : `https://${value}`);
-            return {
-              href: url,
-              label: `Source: ${url.hostname.replace(/^www\./i, '')}${url.pathname === '/' ? '' : url.pathname}`
-            };
-          } catch {}
+            const tags = this.active.has('All') ? CONTENT[this.section] : [...this.active];
+            const pins = new Map;
+
+            await Promise.all([
+              this.clear(),
+              ...tags.map(async tag => (await this.fetchTag(tag)).forEach(pin => pins.set(pin.id, pin)))
+            ]);
+
+            if (run !== this.run) return;
+            if (!pins.size) throw Error('empty feed');
+
+            clearTimeout(this.status._t);
+            this.status.textContent = '';
+            this.scatter(this.entries = [...pins.values()]);
+          } catch (e) {
+            if (run !== this.run) return;
+            this.stage.querySelectorAll('.leaving').forEach(figure => figure.classList.remove('leaving'));
+            type(this.status, 'Signal Lost: ' + e.message, 14);
+          }
         }
-        return {
-          href: `https://pinterest.com/pin/${pin?.id}`,
-          label: 'Source'
-        };
-      }
 
-      scatter(entries) {
-        this.focused = null;
-        this.viewport.style.cursor = this.mode === 'drag' ? 'grab' : 'default';
-        this.stage.innerHTML = '';
+        clear() {
+          const spread = 120, fade = 200;
+          const figures = this.stage.querySelectorAll('figure:not(.leaving)');
 
-        const selected = entries
-          .slice()
-          .sort(() => Math.random() - .5)
-          .slice(0, 80);
-
-        const { clientWidth: viewportWidth, clientHeight: viewportHeight } = this.viewport;
-        const factor = 1.95 + (this.active.size - 1) * .25;
-        const width = Math.max(viewportWidth * factor, 4000);
-        const height = Math.max(viewportHeight * factor, 2500);
-
-        Object.assign(this.stage.style, {
-          width: `${width}px`,
-          height: `${height}px`
-        });
-
-        const aspect = width / height * (.85 + Math.random() * .3);
-        const columns = Math.ceil(Math.sqrt(selected.length * aspect));
-        const rows = Math.ceil(selected.length / columns);
-        const cellWidth = width / columns;
-        const cellHeight = height / rows;
-        const cells = Array.from(
-          { length: columns * rows },
-          (_, i) => [i % columns, Math.floor(i / columns)]
-        ).sort(() => Math.random() - .5);
-
-        selected.forEach(({ pin }, index) => {
-          const image = this.resolveImage(pin);
-          if (!image) return;
-
-          const source = this.resolveSource(pin);
-          const [column, row] = cells[index % cells.length];
-          const x = column * cellWidth + cellWidth / 2 + (Math.random() - .5) * cellWidth * .62;
-          const y = row * cellHeight + cellHeight / 2 + (Math.random() - .5) * cellHeight * .62;
-          const size = 130 + Math.random() * 110;
-          const rotation = (Math.random() * 6 - 3).toFixed(2);
-          const delay = (Math.random() * (this.firstLoad ? 1.5 : .5)).toFixed(2);
-          const duration = this.firstLoad ? 1.6 : 1;
-
-          const figure = document.createElement('figure');
-          figure.dataset.rot = rotation;
-          figure.dataset.color = pin.dominant_color || '';
-          figure.style.cssText = `left:${x}px;top:${y}px;width:${size}px;z-index:${Math.random() * 100 | 0};transform:translate(-50%,-50%) rotate(${rotation}deg)`;
-          figure.innerHTML = `<img src="${image}" loading="lazy" alt="" draggable="false" style="animation-delay:${delay}s;animation-duration:${duration}s"><figcaption><a href="${source.href}" target="_blank" rel="noopener" draggable="false">${source.label}</a></figcaption>`;
-          this.stage.appendChild(figure);
-        });
-
-        this.firstLoad = false;
-        this.scale = 1;
-        this.bounds();
-        this.tx = this.tTx = this.xMin / 2;
-        this.ty = this.tTy = this.yMin / 2;
-        this.apply();
-      }
-
-      bounds() {
-        const { clientWidth, clientHeight } = this.viewport;
-        const width = this.stage.offsetWidth * this.scale;
-        const height = this.stage.offsetHeight * this.scale;
-
-        this.xMin = Math.min(0, clientWidth - width);
-        this.yMin = Math.min(0, clientHeight - height);
-        this.xMax = Math.max(0, clientWidth - width);
-        this.yMax = Math.max(0, clientHeight - height);
-
-        this.tx = M.clamp(this.tx, this.xMin, this.xMax);
-        this.ty = M.clamp(this.ty, this.yMin, this.yMax);
-        this.tTx = M.clamp(this.tTx, this.xMin, this.xMax);
-        this.tTy = M.clamp(this.tTy, this.yMin, this.yMax);
-      }
-
-      apply() {
-        this.stage.style.transform = `translate(${this.tx}px,${this.ty}px) scale(${this.scale})`;
-        this.stage.style.setProperty('--scale', this.scale);
-
-        const x = Math.round((this.viewport.clientWidth / 2 - this.tx) / this.scale);
-        const y = Math.round((this.viewport.clientHeight / 2 - this.ty) / this.scale);
-        this.coords.textContent = `X${String(x / 10 | 0).padStart(3, '0')} · Y${String(y / 10 | 0).padStart(3, '0')} · ${this.scale * 100 | 0}%`;
-      }
-
-      zoomTo(target, onDone) {
-        const step = () => {
-          this.scale = M.lerp(this.scale, target, .15);
-          this.bounds();
-          this.apply();
-
-          if (Math.abs(this.scale - target) > .01) return requestAnimationFrame(step);
-
-          this.scale = target;
-          this.bounds();
-          this.apply();
-          if (!this.manual) this.mode = target > 1 ? 'drag' : 'follow';
-          onDone?.();
-        };
-
-        step();
-      }
-
-      animateView(targetTx, targetTy, targetScale, onDone) {
-        const generation = ++this._viewAnimGen;
-
-        const step = () => {
-          if (generation !== this._viewAnimGen) return;
-
-          this.scale = M.lerp(this.scale, targetScale, .15);
-          this.tx = this.tTx = M.lerp(this.tx, targetTx, .15);
-          this.ty = this.tTy = M.lerp(this.ty, targetTy, .15);
-          this.apply();
-
-          if (Math.abs(this.scale - targetScale) > .01 || Math.hypot(this.tx - targetTx, this.ty - targetTy) > .5) {
-            return requestAnimationFrame(step);
+          if (figures.length) {
+            figures.forEach(figure => {
+              figure.style.setProperty('--out', `${Math.random() * spread | 0}ms`);
+              figure.classList.add('leaving');
+            });
+            this.cleared = new Promise(resolve => setTimeout(resolve, spread + fade));
           }
 
-          this.scale = targetScale;
-          this.tx = this.tTx = targetTx;
-          this.ty = this.tTy = targetTy;
+          return this.cleared;
+        }
+
+        /* ------------------- Layout ------------------- */
+
+        resolveImage(pin) {
+          const images = pin.images || {};
+          return ['564x', '474x', '237x', '236x'].map(size => images[size]?.url).find(Boolean)
+            ?? Object.values(images).find(image => image?.url)?.url;
+        }
+
+        resolveSource(pin) {
+          for (const value of [pin.link, pin.url, pin.pinterest_url, pin.source?.url, pin.source?.link]) {
+            if (!value) continue;
+            try {
+              const url = new URL(value.startsWith('http') ? value : `https://${value}`);
+              return { href: url, label: `Source: ${url.hostname.replace(/^www\./i, '')}${url.pathname === '/' ? '' : url.pathname}` };
+            } catch {}
+          }
+          return { href: `https://pinterest.com/pin/${pin.id}`, label: 'Source' };
+        }
+
+        scatter(entries) {
+          const pins = M.shuffle([...entries]).slice(0, 80);
+          const factor = 1.95 + (this.active.size - 1) * .25;
+          const width = this.width = Math.max(innerWidth * factor, 4000);
+          const height = this.height = Math.max(innerHeight * factor, 2500);
+          const columns = Math.ceil(Math.sqrt(pins.length * width / height * (.85 + Math.random() * .3)));
+          const rows = Math.ceil(pins.length / columns);
+          const cells = M.shuffle(Array.from({ length: columns * rows }, (_, i) => [i % columns, i / columns | 0]));
+          const intro = this.firstLoad;
+
+          this.focused = null;
+          this.viewRun++; // cancel any focus zoom in flight
+          this.restCursor();
+          this.stage.style.width = `${width}px`;
+          this.stage.style.height = `${height}px`;
+          this.stage.innerHTML = pins.map((pin, i) => {
+            const image = this.resolveImage(pin);
+            if (!image) return '';
+
+            const { href, label } = this.resolveSource(pin);
+            const [column, row] = cells[i];
+            const x = (column + .5 + (Math.random() - .5) * .62) * width / columns;
+            const y = (row + .5 + (Math.random() - .5) * .62) * height / rows;
+            const size = 130 + Math.random() * 110;
+            const rotation = (Math.random() * 6 - 3).toFixed(2);
+            const delay = (Math.random() * (intro ? 1.5 : .18)).toFixed(2);
+            const color = pin.dominant_color ? ` data-color="${pin.dominant_color}"` : '';
+
+            return `<figure data-rot="${rotation}"${color} style="left:${x}px;top:${y}px;width:${size}px;z-index:${Math.random() * 100 | 0};transform:translate(-50%,-50%) rotate(${rotation}deg)">`
+              + `<img src="${image}" loading="lazy" alt="" draggable="false" style="animation-delay:${delay}s;animation-duration:${intro ? 1.6 : .55}s">`
+              + `<figcaption><a href="${href}" target="_blank" rel="noopener" draggable="false">${label}</a></figcaption></figure>`;
+          }).join('');
+
+          this.firstLoad = false;
+          this.scale = 1;
+          this.bounds();
+          this.tx = this.tTx = this.xMin / 2;
+          this.ty = this.tTy = this.yMin / 2;
           this.apply();
-          onDone?.();
-        };
-
-        step();
-      }
-
-      /* ------------------- Wander ------------------- */
-
-        scheduleIdle() {
-          clearTimeout(this._idle);
-          this._wandering = false;
-          this._idle = setTimeout(() => this.wander(), 4000);
         }
 
-        wander() {
-          if (this.infoOpen || this.focused || this.hoverLock || this.mode !== 'follow') return;
-          this._wandering = true;
-          this.tTx = M.lerp(this.xMin, this.xMax, Math.random());
-          this.tTy = M.lerp(this.yMin, this.yMax, Math.random());
-          this._idle = setTimeout(() => this._wandering && this.wander(), 3500 + Math.random() * 3000);
+        bounds() {
+          const dx = innerWidth - this.width * this.scale;
+          const dy = innerHeight - this.height * this.scale;
+
+          this.xMin = Math.min(0, dx); this.xMax = Math.max(0, dx);
+          this.yMin = Math.min(0, dy); this.yMax = Math.max(0, dy);
+
+          this.tx = M.clamp(this.tx, this.xMin, this.xMax);
+          this.tTx = M.clamp(this.tTx, this.xMin, this.xMax);
+          this.ty = M.clamp(this.ty, this.yMin, this.yMax);
+          this.tTy = M.clamp(this.tTy, this.yMin, this.yMax);
         }
 
-      /* ------------------- Movement ------------------- */
+        apply() {
+          const { tx, ty, scale } = this;
+          this.stage.style.transform = `translate(${tx}px,${ty}px) scale(${scale})`;
+
+          // Only touch --scale and the readout when they change: --scale restyles every figure.
+          if (scale !== this.appliedScale) this.stage.style.setProperty('--scale', this.appliedScale = scale);
+
+          const x = Math.round((innerWidth / 2 - tx) / scale) / 10 | 0;
+          const y = Math.round((innerHeight / 2 - ty) / scale) / 10 | 0;
+          const text = `X${String(x).padStart(3, '0')} · Y${String(y).padStart(3, '0')} · ${scale * 100 | 0}%`;
+          if (this.coords.textContent !== text) this.coords.textContent = text;
+        }
+
+        // Zoom to `scale`, keeping the stage point under (x, y) fixed on screen.
+        zoomAt(x, y, scale) {
+          this.tx = this.tTx = x - (x - this.tx) / this.scale * scale;
+          this.ty = this.tTy = y - (y - this.ty) / this.scale * scale;
+          this.scale = scale;
+          this.bounds();
+          this.apply();
+        }
+
+        zoomTo(target, onDone) {
+          const step = () => {
+            const scale = M.lerp(this.scale, target, .15);
+            const done = Math.abs(scale - target) <= .01;
+            this.zoomAt(innerWidth / 2, innerHeight / 2, done ? target : scale);
+            if (!done) return requestAnimationFrame(step);
+            if (!this.manual) this.mode = target > 1 ? 'drag' : 'follow';
+            onDone?.();
+          };
+          step();
+        }
+
+        animateView(targetTx, targetTy, targetScale, onDone) {
+          const run = ++this.viewRun;
+          const step = () => {
+            if (run !== this.viewRun) return;
+            this.scale = M.lerp(this.scale, targetScale, .15);
+            this.tx = this.tTx = M.lerp(this.tx, targetTx, .15);
+            this.ty = this.tTy = M.lerp(this.ty, targetTy, .15);
+
+            const done = Math.abs(this.scale - targetScale) <= .01 && Math.hypot(this.tx - targetTx, this.ty - targetTy) <= .5;
+            if (done) {
+              this.scale = targetScale;
+              this.tx = this.tTx = targetTx;
+              this.ty = this.tTy = targetTy;
+            }
+            this.apply();
+            done ? onDone?.() : requestAnimationFrame(step);
+          };
+          step();
+        }
+
+        /* ------------------- Movement ------------------- */
+
+        restCursor() {
+          this.viewport.style.cursor = this.mode === 'drag' ? 'grab' : 'default';
+        }
+
+        setMode(mode) {
+          this.mode = mode;
+          this.restCursor();
+        }
+
+        // Any input postpones the idle wander by 4s.
+        resetIdle() {
+          this.wanderAt = performance.now() + 4000;
+        }
 
         move() {
           let dragging = false, startX = 0, startY = 0, startTx = 0, startTy = 0;
 
-          const setMode = mode => {
-            this.mode = mode;
-            this.viewport.style.cursor = mode === 'drag' ? 'grab' : 'default';
-          };
-
           const track = e => {
-            this.scheduleIdle();
-            if (this.infoOpen || this.focused || this.hoverLock || this.mode !== 'follow') return;
+            this.resetIdle();
+            if (this.infoOpen || this.focused || this.mode !== 'follow') return;
             const { clientX, clientY } = e.touches?.[0] || e;
-            const followX = this.xMin < 0 ? this.xMin : 0;
-            const followY = this.yMin < 0 ? this.yMin : 0;
-            this.tTx = M.clamp(M.map(clientX, 0, this.viewport.clientWidth, 0, followX), this.xMin, this.xMax);
-            this.tTy = M.clamp(M.map(clientY, 0, this.viewport.clientHeight, 0, followY), this.yMin, this.yMax);
+            this.tTx = M.clamp(M.map(clientX, 0, innerWidth, 0, this.xMin), this.xMin, this.xMax);
+            this.tTy = M.clamp(M.map(clientY, 0, innerHeight, 0, this.yMin), this.yMin, this.yMax);
           };
-          window.addEventListener('mousemove', track);
-          window.addEventListener('touchmove', track, { passive: true });
+          addEventListener('mousemove', track);
+          addEventListener('touchmove', track, { passive: true });
 
           this.viewport.addEventListener('pointerdown', e => {
-            this.scheduleIdle();
+            this.resetIdle();
             if (this.infoOpen || this.focused || this.mode !== 'drag') return;
             dragging = true;
             startX = e.clientX; startY = e.clientY;
             startTx = this.tx; startTy = this.ty;
             this.viewport.style.cursor = 'grabbing';
           });
-          window.addEventListener('pointermove', e => {
+
+          addEventListener('pointermove', e => {
             if (this.infoOpen || !dragging) return;
-            this.tx = this.tTx = M.clamp(startTx + (e.clientX - startX), this.xMin, this.xMax);
-            this.ty = this.tTy = M.clamp(startTy + (e.clientY - startY), this.yMin, this.yMax);
+            this.tx = this.tTx = M.clamp(startTx + e.clientX - startX, this.xMin, this.xMax);
+            this.ty = this.tTy = M.clamp(startTy + e.clientY - startY, this.yMin, this.yMax);
+            this.apply();
           });
-          window.addEventListener('pointerup', () => {
+
+          addEventListener('pointerup', () => {
             dragging = false;
             if (this.mode === 'drag' && !this.infoOpen) this.viewport.style.cursor = 'grab';
           });
 
-          window.addEventListener('keydown', e => {
+          addEventListener('keydown', e => {
             if (this.infoOpen || this.focused || e.key.toLowerCase() !== 'd') return;
             this.manual = true;
-            setMode(this.mode === 'follow' ? 'drag' : 'follow');
+            this.setMode(this.mode === 'follow' ? 'drag' : 'follow');
           });
 
           this.viewport.addEventListener('wheel', e => {
-            this.scheduleIdle();
+            this.resetIdle();
             if (this.infoOpen || this.focused) return;
             e.preventDefault();
-            const rect = this.viewport.getBoundingClientRect();
-            const mx = e.clientX - rect.left, my = e.clientY - rect.top;
             const scale = M.clamp(this.scale - e.deltaY * .0015, this.minScale, this.maxScale);
-            this.tx = this.tTx = mx - ((mx - this.tx) / this.scale) * scale;
-            this.ty = this.tTy = my - ((my - this.ty) / this.scale) * scale;
-            this.scale = scale;
-            if (!this.manual) setMode(scale >= 1.2 ? 'drag' : 'follow');
-            this.bounds();
-            this.apply();
+            this.zoomAt(e.clientX, e.clientY, scale);
+            if (!this.manual) this.setMode(scale >= 1.2 ? 'drag' : 'follow');
           }, { passive: false });
 
-          const loop = () => {
+          // One loop for follow, wander and Info drift; it skips frames where nothing moves.
+          const loop = now => {
+            requestAnimationFrame(loop);
+
             if (this.infoOpen) {
+              if (Math.abs(this.vx) + Math.abs(this.vy) < .01) return;
               this.tx += this.vx;
               this.ty += this.vy;
               this.vx *= .86;
               this.vy *= .86;
               this.bounds();
-              this.apply();
-              return requestAnimationFrame(loop);
+              return this.apply();
             }
-            if (this.focused) return requestAnimationFrame(loop);
-            const nextTx = M.lerp(this.tx, this.tTx, .045);
-            const nextTy = M.lerp(this.ty, this.tTy, .045);
-            this.vx = nextTx - this.tx;
-            this.vy = nextTy - this.ty;
-            this.tx = nextTx;
-            this.ty = nextTy;
+
+            if (this.focused) return;
+
+            if (now > this.wanderAt) {
+              this.wanderAt = now + 3500 + Math.random() * 3000;
+              if (this.mode === 'follow') {
+                this.tTx = M.lerp(this.xMin, this.xMax, Math.random());
+                this.tTy = M.lerp(this.yMin, this.yMax, Math.random());
+              }
+            }
+
+            const dx = this.tTx - this.tx, dy = this.tTy - this.ty;
+            if (Math.abs(dx) + Math.abs(dy) < .01) return;
+            this.tx += dx * .045;
+            this.ty += dy * .045;
             this.apply();
-            requestAnimationFrame(loop);
           };
           requestAnimationFrame(loop);
 
           let resizeTimer;
-          window.addEventListener('resize', () => {
+          addEventListener('resize', () => {
             clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(() => { this.bounds(); if (this.entries.length) this.scatter(this.entries); }, 200);
+            resizeTimer = setTimeout(() => this.entries.length ? this.scatter(this.entries) : this.bounds(), 200);
           });
 
-          this.scheduleIdle();
+          this.resetIdle();
         }
       }
 
       /* ------------------- Info ------------------- */
 
+      // Push figures within reach of (cx, cy) outward and fade them; or put everything back.
       function partFigures(board, cx, cy, opening, exclude) {
         const radius = Math.min(innerWidth, innerHeight) / board.scale;
 
         board.stage.querySelectorAll('figure').forEach(figure => {
           if (figure === exclude) return;
 
-          const rotation = figure.dataset.rot || '0';
-          const reset = () => {
-            figure.style.transform = `translate(-50%, -50%) rotate(${rotation}deg)`;
-            figure.style.opacity = '';
-          };
-
-          if (!opening) return reset();
-
-          const halfSize = (parseFloat(figure.style.width) || 0) / 2;
-          const dx = parseFloat(figure.style.left) - cx;
-          const dy = parseFloat(figure.style.top) - cy;
+          const { left, top, width } = figure.style;
+          const dx = parseFloat(left) - cx;
+          const dy = parseFloat(top) - cy;
           const distance = Math.hypot(dx, dy);
+          const reach = radius + parseFloat(width) / 2 - distance;
+          const push = opening && reach >= 0 ? (reach + 80 / board.scale) / (distance || 1) : 0;
 
-          if (distance > radius + halfSize) return reset();
-
-          const push = radius - distance + halfSize + 80 / board.scale;
-          const offsetX = dx / (distance || 1) * push;
-          const offsetY = dy / (distance || 1) * push;
-
-          figure.style.transform = `translate(calc(-50% + ${offsetX}px), calc(-50% + ${offsetY}px)) rotate(${rotation}deg)`;
-          figure.style.opacity = '0';
+          const offset = push ? `calc(-50% + ${dx * push}px), calc(-50% + ${dy * push}px)` : '-50%, -50%';
+          figure.style.transform = `translate(${offset}) rotate(${figure.dataset.rot}deg)`;
+          figure.style.opacity = push ? '0' : '';
         });
       }
 
       function setupInfo(board) {
         const overlay = document.getElementById('info');
         const button = document.getElementById('info-btn');
+        const isOpen = () => overlay.getAttribute('aria-hidden') === 'false';
+        const part = opening => partFigures(board, (innerWidth / 2 - board.tx) / board.scale, (innerHeight / 2 - board.ty) / board.scale, opening);
 
-        const partImages = opening => {
-          const scale = board.scale;
-          const cx = (innerWidth / 2 - board.tx) / scale;
-          const cy = (innerHeight / 2 - board.ty) / scale;
-          partFigures(board, cx, cy, opening);
-        };
-
-        const open = () => {
+        button.addEventListener('click', () => {
           board.filter.open = false;
           board.vx = (board.tTx - board.tx) * .25;
           board.vy = (board.tTy - board.ty) * .25;
@@ -873,76 +812,49 @@
           board.viewport.style.cursor = 'w-resize';
 
           board.zoomTo(1, () => {
-            partImages(true);
+            part(true);
             setTimeout(() => overlay.setAttribute('aria-hidden', 'false'), 50);
           });
-        };
+        });
 
         const dismiss = () => {
           overlay.setAttribute('aria-hidden', 'true');
           board.infoOpen = false;
-          board.viewport.style.cursor = 'default';
-          partImages(false);
+          board.restCursor();
+          part(false);
         };
 
-        button.addEventListener('click', open);
-
         document.addEventListener('click', ({ target }) => {
-          if (overlay.getAttribute('aria-hidden') === 'false' && !overlay.contains(target) && target !== button) {
-            dismiss();
-          }
+          if (isOpen() && !overlay.contains(target) && target !== button) dismiss();
         });
 
-        window.addEventListener('keydown', ({ key }) => {
-          if (key === 'Escape' && overlay.getAttribute('aria-hidden') === 'false') dismiss();
+        addEventListener('keydown', ({ key }) => {
+          if (key === 'Escape' && isOpen()) dismiss();
         });
       }
 
       /* ------------------- Focus ------------------- */
-      
-      function targetScaleFor(figure, board) {
-        const image = figure.querySelector('img');
-        const width = parseFloat(figure.style.width) || figure.offsetWidth || 1;
-        const resolution = window.devicePixelRatio || 1;
-        const naturalWidth = image.naturalWidth || width * 2;
-
-        return M.clamp(naturalWidth / (width * resolution), 2, board.maxScale);
-      }
 
       function setupFocus(board) {
-        let previousScale = 1;
-        let previousTx = 0;
-        let previousTy = 0;
-        let downX = 0;
-        let downY = 0;
+        let previous, downX = 0, downY = 0;
 
         const open = figure => {
           if (board.infoOpen || board.focused === figure) return;
 
-          if (!board.focused) {
-            previousScale = board.scale;
-            previousTx = board.tx;
-            previousTy = board.ty;
-          } else {
-            board.focused.style.zIndex = board.focused.dataset.zBase ?? '';
-          }
+          if (board.focused) board.focused.style.zIndex = board.focused.dataset.z;
+          else previous = { tx: board.tx, ty: board.ty, scale: board.scale };
 
           board.focused = figure;
-
-          figure.dataset.zBase = figure.style.zIndex || '';
+          figure.dataset.z = figure.style.zIndex;
           figure.style.zIndex = 1000;
           figure.style.transform = 'translate(-50%, -50%) rotate(0deg)';
           board.viewport.style.cursor = 'w-resize';
 
           const x = parseFloat(figure.style.left);
           const y = parseFloat(figure.style.top);
-          const scale = targetScaleFor(figure, board);
-          const stageX = board.stage.offsetWidth / 2;
-          const stageY = board.stage.offsetHeight / 2;
-          const targetTx = board.viewport.clientWidth / 2 - stageX - scale * (x - stageX);
-          const targetTy = board.viewport.clientHeight / 2 - stageY - scale * (y - stageY);
+          const scale = board.maxScale;
 
-          board.animateView(targetTx, targetTy, scale, () => {
+          board.animateView(innerWidth / 2 - scale * x, innerHeight / 2 - scale * y, scale, () => {
             if (board.focused === figure) partFigures(board, x, y, true, figure);
           });
         };
@@ -951,15 +863,14 @@
           const figure = board.focused;
           if (!figure) return;
 
-          board.viewport.style.cursor = board.mode === 'drag' ? 'grab' : 'default';
+          board.restCursor();
           partFigures(board, 0, 0, false);
+          figure.style.zIndex = figure.dataset.z;
 
-          figure.style.zIndex = figure.dataset.zBase ?? '';
-
-          board.animateView(previousTx, previousTy, previousScale, () => {
+          board.animateView(previous.tx, previous.ty, previous.scale, () => {
             board.focused = null;
             board.bounds();
-            board.scheduleIdle();
+            board.resetIdle();
           });
         };
 
@@ -973,161 +884,130 @@
           if (e.target.closest('a') || board.infoOpen) return;
 
           const figure = e.target.closest('figure');
-
           if (figure === board.focused) return dismiss();
           if (figure) return open(figure);
           if (board.focused) dismiss();
         });
 
-        window.addEventListener('keydown', ({ key }) => {
+        addEventListener('keydown', ({ key }) => {
           if (key === 'Escape' && board.focused) dismiss();
         });
       }
 
       /* ------------------- Sonics ------------------- */
-      
-      const S=[0,2,3,7,10,14],R=46.25;
 
-      function hexToHsl(x){
-        let n=parseInt(x.slice(1),16),r=(n>>16&255)/255,g=(n>>8&255)/255,b=(n&255)/255,
-            M=Math.max(r,g,b),m=Math.min(r,g,b),l=(M+m)/2;
-        if(M==m)return{h:0,s:0,l};
-        let d=M-m,s=d/(1-Math.abs(2*l-1)),h=M==r?(g-b)/d:M==g?(b-r)/d+2:(r-g)/d+4;
-        return{h:(h*60+360)%360,s,l};
+      const SCALE = [0, 2, 3, 7, 10, 14], ROOT = 46.25;
+
+      function hexToHsl(hex) {
+        const n = parseInt(hex.slice(1), 16);
+        const [r, g, b] = [n >> 16, n >> 8, n].map(v => (v & 255) / 255);
+        const max = Math.max(r, g, b), min = Math.min(r, g, b), l = (max + min) / 2, d = max - min;
+        if (!d) return { h: 0, s: 0, l };
+        const h = max === r ? (g - b) / d : max === g ? (b - r) / d + 2 : (r - g) / d + 4;
+        return { h: (h * 60 + 360) % 360, s: d / (1 - Math.abs(2 * l - 1)), l };
       }
 
-      function colorToFreq({h,l}){
-        return R*2**((S[Math.floor(h/360*S.length)]+Math.round(l*1.4)*12)/12);
-      }
+      class Sonics {
+        enabled = true;
 
-      class Sonics{
-        enabled=1;
+        init() {
+          if (this.ctx) return;
+          const ctx = this.ctx = new AudioContext();
 
-        init(){
-          if(this.ctx)return;
-          let C=this.ctx=new(window.AudioContext||webkitAudioContext);
+          this.master = new GainNode(ctx, { gain: .22 });
+          this.master
+            .connect(new DynamicsCompressorNode(ctx, { threshold: -24, knee: 22, ratio: 2.5, attack: .03, release: .6 }))
+            .connect(ctx.destination);
 
-          this.master=C.createGain();
-          this.master.gain.value=.22;
-
-          let c=C.createDynamicsCompressor();
-          c.threshold.value=-24;
-          c.knee.value=22;
-          c.ratio.value=2.5;
-          c.attack.value=.03;
-          c.release.value=.6;
-
-          this.master.connect(c).connect(C.destination);
-
-          this.amb=C.createOscillator();
-          this.ambG=C.createGain();
-          this.amb.type='sine';
-          this.amb.frequency.value=R/2;
-          this.ambG.gain.value=.018;
-          this.amb.connect(this.ambG).connect(this.master);
-          this.amb.start();
+          const drone = new OscillatorNode(ctx, { frequency: ROOT / 2 });
+          this.drone = new GainNode(ctx, { gain: .018 });
+          drone.connect(this.drone).connect(this.master);
+          drone.start();
         }
 
-        start(){
+        start() {
           this.init();
           this.ctx.resume();
-          this.enabled=1;
-          this.ambG.gain.setTargetAtTime(.018,this.ctx.currentTime,.5);
+          this.enabled = true;
+          this.drone.gain.setTargetAtTime(.018, this.ctx.currentTime, .5);
         }
 
-        stop(){
-          this.enabled=0;
-          if(this.ctx)this.ambG.gain.setTargetAtTime(0,this.ctx.currentTime,.5);
+        stop() {
+          this.enabled = false;
+          this.drone?.gain.setTargetAtTime(0, this.ctx.currentTime, .5);
         }
 
-        toggle(){
-          this.enabled?this.stop():this.start();
-          return this.enabled;
+        toggle() {
+          this.enabled ? this.stop() : this.start();
         }
 
-        play(f,s,l){
-          if(!this.enabled)return;
+        // One soft chime per colour: hue picks the note, lightness the octave and length, saturation the brightness.
+        play(hex) {
+          if (!this.enabled) return;
 
-          let C=this.ctx,t=C.currentTime,d=1.8+l*1.8,
-              g=C.createGain(),p=C.createStereoPanner(),q=C.createBiquadFilter();
+          const { h, s, l } = hexToHsl(hex);
+          const ctx = this.ctx, t = ctx.currentTime, d = 1.8 + l * 1.8;
+          const f = ROOT * 2 ** ((SCALE[h / 60 | 0] + Math.round(l * 1.4) * 12) / 12);
 
-          q.type='lowpass';
-          q.frequency.value=550+s*1700;
-          q.Q.value=1.2;
+          const body = new BiquadFilterNode(ctx, { type: 'lowpass', frequency: 550 + s * 1700, Q: 1.2 });
+          const envelope = new GainNode(ctx, { gain: 0 });
+          envelope.gain.setValueAtTime(0, t);
+          envelope.gain.linearRampToValueAtTime(.09 + s * .03, t + .06);
+          envelope.gain.exponentialRampToValueAtTime(.001, t + d);
+          body.connect(envelope).connect(new StereoPannerNode(ctx, { pan: (Math.random() - .5) * .5 })).connect(this.master);
 
-          g.gain.setValueAtTime(0,t);
-          g.gain.linearRampToValueAtTime(.09+s*.03,t+.06);
-          g.gain.exponentialRampToValueAtTime(.001,t+d);
+          const shimmer = new GainNode(ctx);
+          shimmer.gain.setValueAtTime(.018 * s, t);
+          shimmer.gain.exponentialRampToValueAtTime(.001, t + d * .65);
+          shimmer.connect(this.master);
 
-          p.pan.value=(Math.random()-.5)*.5;
-
-          let o=C.createOscillator(),x=C.createOscillator(),z=C.createOscillator();
-
-          o.type=x.type=z.type='sine';
-          o.frequency.value=f;
-          x.frequency.value=f*2.01;
-          z.frequency.value=f*3.97;
-
-          o.connect(q);
-          x.connect(q);
-          q.connect(g).connect(p).connect(this.master);
-
-          let zg=C.createGain();
-          zg.gain.setValueAtTime(.018*s,t);
-          zg.gain.exponentialRampToValueAtTime(.001,t+d*.65);
-          z.connect(zg).connect(this.master);
-
-          o.start(t);x.start(t);z.start(t);
-          o.stop(t+d);x.stop(t+d);z.stop(t+d);
+          for (const [frequency, out] of [[f, body], [f * 2.01, body], [f * 3.97, shimmer]]) {
+            const osc = new OscillatorNode(ctx, { frequency });
+            osc.connect(out);
+            osc.start(t);
+            osc.stop(t + d);
+          }
         }
       }
 
-      function setupSonics(board){
-        let s=new Sonics(),last;
+      function setupSonics(board) {
+        const sonics = new Sonics();
+        let last;
 
-        board.sonicsEnabled=1;
+        const arm = () => sonics.start();
+        addEventListener('pointerdown', arm, { once: true });
+        addEventListener('keydown', arm, { once: true });
 
-        let arm=()=>s.start();
-        addEventListener('pointerdown',arm,{once:1});
-        addEventListener('keydown',arm,{once:1});
-
-        addEventListener('keydown',e=>{
-          if((e.key==='m'||e.key==='M')&&!e.metaKey&&!e.ctrlKey&&!e.altKey){
-            board.sonicsEnabled=s.toggle();
-          }
+        addEventListener('keydown', e => {
+          if (e.key.toLowerCase() === 'm' && !e.metaKey && !e.ctrlKey && !e.altKey) sonics.toggle();
         });
 
-        board.stage.onpointerover=e=>{
-          let f=e.target.closest('figure[data-color]');
-          if(!f||f==last||!s.ctx)return;
+        board.stage.addEventListener('pointerover', e => {
+          const figure = e.target.closest('figure[data-color]');
+          if (!figure || figure === last || !sonics.ctx) return;
+          last = figure;
+          sonics.play(figure.dataset.color);
+        });
 
-          last=f;
-
-          let h=hexToHsl(f.dataset.color);
-          s.play(colorToFreq(h),h.s,h.l);
-        };
-
-        board.stage.onpointerout=e=>{
-          if(!e.relatedTarget?.closest?.('figure'))last=null;
-        };
-      }
-
-      /* ------------------- Mobile ------------------- */
-
-      if (window.innerWidth <= 820) {
-        document.body.innerHTML = '<a href="mailto:mail@headless.horse">mail@headless.horse</a>';
-        document.body.style.cssText = 'display:flex;align-items:center;justify-content:center;height:100svh;text-align:center;';
+        board.stage.addEventListener('pointerout', e => {
+          if (!e.relatedTarget?.closest?.('figure')) last = null;
+        });
       }
 
       /* ------------------- Boot ------------------- */
-      
-      const board = new Board();
-      bootIntro();
-      setupInfo(board);
-      setupFocus(board);
-      setupSonics(board);
-      document.querySelectorAll('nav [data-section]').forEach(b => b.addEventListener('click', () => board.setSection(b.dataset.section)));
-    </script>
+
+      if (innerWidth <= 820) {
+        document.body.innerHTML = '<a href="mailto:mail@headless.horse">mail@headless.horse</a>';
+        document.body.style.cssText = 'display:flex;align-items:center;justify-content:center;height:100svh;text-align:center';
+      } else {
+        const board = new Board();
+        staggerScramble([...document.querySelectorAll('nav button, #filter summary .filter-label')], 90, 700, 28, 40);
+        setupInfo(board);
+        setupFocus(board);
+        setupSonics(board);
+        document.querySelectorAll('nav [data-section]').forEach(b => b.addEventListener('click', () => board.setSection(b.dataset.section)));
+      }
+</script>
     <script async defer src="https://scripts.withcabin.com/hello.js"></script>
   </body>
 </html>
