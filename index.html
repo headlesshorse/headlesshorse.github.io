@@ -428,9 +428,9 @@
         appliedScale = 1;
         minScale = .7;
         maxScale = 2;
-        tx = 0; ty = 0;     // current offset
-        tTx = 0; tTy = 0;   // target offset
-        vx = 0; vy = 0;     // drift while Info is open
+        tx = 0; ty = 0;
+        tTx = 0; tTy = 0;
+        vx = 0; vy = 0;
         xMin = 0; xMax = 0; yMin = 0; yMax = 0;
         mode = 'follow';
         manual = false;
@@ -572,7 +572,7 @@
           const intro = this.firstLoad;
 
           this.focused = null;
-          this.viewRun++; // cancel any focus zoom in flight
+          this.viewRun++;
           this.restCursor();
           this.stage.style.width = `${width}px`;
           this.stage.style.height = `${height}px`;
@@ -619,7 +619,6 @@
           const { tx, ty, scale } = this;
           this.stage.style.transform = `translate(${tx}px,${ty}px) scale(${scale})`;
 
-          // Only touch --scale and the readout when they change: --scale restyles every figure.
           if (scale !== this.appliedScale) this.stage.style.setProperty('--scale', this.appliedScale = scale);
 
           const x = Math.round((innerWidth / 2 - tx) / scale) / 10 | 0;
@@ -628,7 +627,6 @@
           if (this.coords.textContent !== text) this.coords.textContent = text;
         }
 
-        // Zoom to `scale`, keeping the stage point under (x, y) fixed on screen.
         zoomAt(x, y, scale) {
           this.tx = this.tTx = x - (x - this.tx) / this.scale * scale;
           this.ty = this.tTy = y - (y - this.ty) / this.scale * scale;
@@ -680,7 +678,6 @@
           this.restCursor();
         }
 
-        // Any input postpones the idle wander by 4s.
         resetIdle() {
           this.wanderAt = performance.now() + 4000;
         }
@@ -734,7 +731,6 @@
             if (!this.manual) this.setMode(scale >= 1.2 ? 'drag' : 'follow');
           }, { passive: false });
 
-          // One loop for follow, wander and Info drift; it skips frames where nothing moves.
           const loop = now => {
             requestAnimationFrame(loop);
 
@@ -778,7 +774,6 @@
 
       /* ------------------- Info ------------------- */
 
-      // Push figures within reach of (cx, cy) outward and fade them; or put everything back.
       function partFigures(board, cx, cy, opening, exclude) {
         const radius = Math.min(innerWidth, innerHeight) / board.scale;
 
@@ -941,7 +936,6 @@
           this.enabled ? this.stop() : this.start();
         }
 
-        // One soft chime per colour: hue picks the note, lightness the octave and length, saturation the brightness.
         play(hex) {
           if (!this.enabled) return;
 
